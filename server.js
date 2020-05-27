@@ -38,12 +38,12 @@ const db = new sqlite3.Database("./db/election.db", err => {
 
 
 //GET a single candidate
-db.get(`SELECT * FROM candidates WHERE id = 1`, (err, row) => {
-    if(err) {
-        console.log(err);
-    }
-    console.log(row);
-})
+// db.get(`SELECT * FROM candidates WHERE id = 1`, (err, row) => {
+//     if(err) {
+//         console.log(err);
+//     }
+//     console.log(row);
+// })
 
 
 
@@ -77,24 +77,23 @@ app.get('/api/candidates', (req, res) => {
 // });
 
 
-//Get a single candidate
+// Get single candidate
 app.get('/api/candidate/:id', (req, res) => {
-    const sql = `SELECT * FROM candidates
-                WHERE id = ?`;
+    const sql = `SELECT * FROM candidates 
+                 WHERE id = ?`;
     const params = [req.params.id];
     db.get(sql, params, (err, row) => {
-        if(err) {
-            res.status(400).json({error: err.message});
-            return;
-        }
-
-
-        res.json({
-            message: 'success',
-            data: row
-        })
-    })
-})
+      if (err) {
+        res.status(400).json({ error: err.message });
+        return;
+      }
+  
+      res.json({
+        message: 'success',
+        data: row
+      });
+    });
+  });
 
 
 //CREATE a single candidate
@@ -108,6 +107,27 @@ app.get('/api/candidate/:id', (req, res) => {
 //     }
 //     console.log(result, this.lastID);
 // })
+
+
+
+// Delete a candidate
+app.delete('/api/candidate/:id', (req, res) => {
+    const sql = `DELETE FROM candidates WHERE id = ?`;
+    const params = [req.params.id];
+    db.run(sql, params, function(err, result) {
+      if (err) {
+        res.status(400).json({ error: res.message });
+        return;
+      }
+  
+      res.json({
+        message: 'successfully deleted',
+        changes: this.changes
+      });
+    });
+  });
+
+
 
 
 //default response for any other request (Not Found) Catch all
